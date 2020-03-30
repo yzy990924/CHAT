@@ -284,10 +284,10 @@ def update_time(user_time,user_name):
         f.write(line)
     f.close()
     return
-def write_time(user_name):
-    f = open(user_time_path, 'a')
-    f.write(user_name + '@@0\n' )
-    f.close()
+# def write_time(user_name):
+#     f = open(user_time_path, 'a')
+#     f.write(user_name + '@@0\n' )
+#     f.close()
 def read_file(str):
     f = open(str, 'r')
     ret = {}
