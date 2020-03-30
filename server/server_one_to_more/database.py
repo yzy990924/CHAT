@@ -1,7 +1,11 @@
+#coding:utf-8
 import socket
 import threading
 import sqlite3
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 dbfile = "Chat.db"
 
 def create_sql():
@@ -19,28 +23,16 @@ def create_sql():
            ))
     sql.execute("""create table if not exists
         %s(
-        %s integer primary key autoincrement,
         %s varchar(128),
         %s varchar(128)
         )"""
-        % ('chatroom',
-            'room_id',
-            'room_name',
-            'room_note'
-           ))
-    sql.execute("""create table if not exists
-        %s(
-        %s integer,
-        %s varchar(128)
-        )"""
-        % ('personRoom',
-            'room_id',
-            'name'
+        % ('userTime',
+            'name',
+            'time'
            ))
     sql.close()
  
 def search_all_username():
-    ret  = []
     sql = sqlite3.connect(dbfile)
     try:
         sql = sqlite3.connect(dbfile)
@@ -52,11 +44,11 @@ def search_all_username():
     sql.close()
 
 def search_passwd(input_name):
-    print input_name
+    input_name = input_name
     try:
         sql = sqlite3.connect(dbfile)
         cur = sql.cursor()
-        cur.execute("select passwd from user where name = (%s) "%(input_name))
+        cur.execute("select passwd from user where name  = (%s) "%(input_name))
         return cur.fetchall()[0][0]
     except sqlite3.Error as e:
         print e
@@ -70,6 +62,25 @@ def add_user(input_name,input_password):
     sql.commit()
     sql.close()
 
+def add_time(input_name,input_time):
+    sql = sqlite3.connect(dbfile)
+    try:
+        cur = sql.cursor()
+        cur.execute("select time from userTime where name = (%s) "%(input_name))
+        print cur.fetchall()
+        if cur.fetchall() != []:
+            time = cur.fetchall()[0][0]
+            sql.execute("update userTime set time = (?) where name = input_name",
+                (input_time+time))
+            sql.commit()
+        else :
+            sql.execute("insert into userTime(name,time) values(?,?)",
+                (input_name,input_time))
+            sql.commit()
+
+    except sqlite3.Error as e:
+        print e
+    sql.close()
 
 # def add_chatroon_data(room_name,room_note):
 #     sql = sqlite3.connect(dbfile)

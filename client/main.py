@@ -40,5 +40,3 @@ finally:
 #b =  struct.pack('<I',7888)
 #print len(bb)
 #print struct.unpack('<I',bb)
-
-

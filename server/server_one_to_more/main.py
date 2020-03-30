@@ -23,41 +23,41 @@ class Chat_One_Process():
       self.sock = sock  # 该对象处理的套接字
       self.addr = addr  # 该对象处理对象的地址
 
-   # def game_process(self,room_name):  # 处理每个房间游戏题目的发放和胜利玩家提示
-   #    global room_answer
-   #    global answer_valid
-   #    global num_game
-   #    global room_user
-   #    while True:
-   #       while int(datetime.datetime.now().second) % 30 != 0:  # 每半分钟一个题目
-   #          time.sleep(1)
-   #       print int(datetime.datetime.now().second)
-   #       tmp_mess = '21点游戏开始...(请在20秒之内回答,用下面四个数运算成最接近21的玩家胜利)\n数字:'
-   #       num_game[room_name] = ['1', '2', '3', '4']
-   #       num_game[room_name][0] = str(random.randint(1, 10))
-   #       num_game[room_name][1] = str(random.randint(1, 10))
-   #       num_game[room_name][2] = str(random.randint(1, 10))
-   #       num_game[room_name][3] = str(random.randint(1, 10))
-   #       tmp_mess = tmp_mess + num_game[room_name][0] + '  '
-   #       tmp_mess = tmp_mess + num_game[room_name][1] + '  '
-   #       tmp_mess = tmp_mess + num_game[room_name][2] + '  '
-   #       tmp_mess = tmp_mess + num_game[room_name][3] + '  '
-   #       for u in room_user[room_name]:
-   #          self.send_mess('1', '2', '%s#%s: %s\n' % (room_name, '服务器消息', tmp_mess), u)  # #号前面是房间名称
-   #       answer_valid[room_name] = True
-   #       time.sleep(20)  # 等待玩家回答
-   #       answer_valid[room_name] = False  # 关闭接收答案
-   #       if room_answer[room_name] != []:  # 有回答
-   #          for u in room_user[room_name]:
-   #             tmp_mess = '胜利玩家:' + room_answer[room_name][0] + '\n' + '回答:' + room_answer[room_name][1] + ' = ' + str(
-   #                eval(room_answer[room_name][1])) + '......'
-   #             self.send_mess('1', '2', '%s#%s: %s\n' % (room_name, '服务器消息', tmp_mess), u)  # #号前面是房间名称
-   #       else:
-   #          tmp_mess = '无人回答,本局无人胜利'
-   #          for u in room_user[room_name]:
-   #             self.send_mess('1', '2', '%s#%s: %s\n' % (room_name, '服务器消息', tmp_mess), u)  # #号前面是房间名称
-   #       room_answer[room_name] = []  # 清除回答
-   #       num_game[room_name] = []
+   def game_process(self,room_name):  # 处理每个房间游戏题目的发放和胜利玩家提示
+      global room_answer
+      global answer_valid
+      global num_game
+      global room_user
+      while True:
+         while int(datetime.datetime.now().second) % 30 != 0:  # 每半分钟一个题目
+            time.sleep(1)
+         print int(datetime.datetime.now().second)
+         tmp_mess = '21点游戏开始...(请在20秒之内回答,用下面四个数运算成最接近21的玩家胜利)\n数字:'
+         num_game[room_name] = ['1', '2', '3', '4']
+         num_game[room_name][0] = str(random.randint(1, 10))
+         num_game[room_name][1] = str(random.randint(1, 10))
+         num_game[room_name][2] = str(random.randint(1, 10))
+         num_game[room_name][3] = str(random.randint(1, 10))
+         tmp_mess = tmp_mess + num_game[room_name][0] + '  '
+         tmp_mess = tmp_mess + num_game[room_name][1] + '  '
+         tmp_mess = tmp_mess + num_game[room_name][2] + '  '
+         tmp_mess = tmp_mess + num_game[room_name][3] + '  '
+         for u in room_user[room_name]:
+            self.send_mess('1', '2', '%s#%s: %s\n' % (room_name, '服务器消息', tmp_mess), u)  # #号前面是房间名称
+         answer_valid[room_name] = True
+         time.sleep(20)  # 等待玩家回答
+         answer_valid[room_name] = False  # 关闭接收答案
+         if room_answer[room_name] != []:  # 有回答
+            for u in room_user[room_name]:
+               tmp_mess = '胜利玩家:' + room_answer[room_name][0] + '\n' + '回答:' + room_answer[room_name][1] + ' = ' + str(
+                  eval(room_answer[room_name][1])) + '......'
+               self.send_mess('1', '2', '%s#%s: %s\n' % (room_name, '服务器消息', tmp_mess), u)  # #号前面是房间名称
+         else:
+            tmp_mess = '无人回答,本局无人胜利'
+            for u in room_user[room_name]:
+               self.send_mess('1', '2', '%s#%s: %s\n' % (room_name, '服务器消息', tmp_mess), u)  # #号前面是房间名称
+         room_answer[room_name] = []  # 清除回答
+         num_game[room_name] = []
 
    def send_mess(self, mess_type, action_type, str_mess, sock):
 
@@ -121,17 +121,19 @@ class Chat_One_Process():
          self.send_mess('0', 'A', mess_room, sock)  # 发送房间
 
       elif head_str == '06':  # 创建新房间
-         print '创建新房间:' + one_buffer
-         all_room.append(one_buffer)
-         room_user[one_buffer] = []
-         room_answer[one_buffer] = []  # 在回答字典中加入该key
+         index = one_buffer.find('@@')
+         print '创建新房间:' + one_buffer[0:index]
+
+         all_room.append(one_buffer[0:index])
+         room_user[one_buffer[0:index]] = []
+         room_answer[one_buffer[0:index]] = []  # 在回答字典中加入该key
          answer_valid[one_buffer] = False  # 该房间是否处于接收答案状态
          num_game[one_buffer] = []  # 存储房间游戏数字
-         t = threading.Thread(target=self.game_process, args=(one_buffer,))
+         t = threading.Thread(target=self.game_process, args=(one_buffer[0:index],))
          t.setDaemon(True)
          t.start()
          for u in all_user:  # 向所有用户告知
-            self.send_mess('0', '7', one_buffer, u)
+            self.send_mess('0', '7', one_buffer[0:index], u)
 
       elif head_str == '04':  # 进入房间
          room_user[one_buffer].append(sock)
@@ -220,7 +222,7 @@ class Chat_One_Process():
    def mess_process(self):  # 消息处理，当套接字可读时，调用该函数
       global mess_queue
 
-      tmp_buffer = self.sock.recv(1024)  # 本次获取的数据
+      tmp_buffer = self.sock.recv(1024)
       self.all_buffer = self.all_buffer + tmp_buffer
       if not tmp_buffer:  #  对方关闭连接
          mess_queue.pop(self.sock)  # 清除消息队列
@@ -322,22 +324,23 @@ class MyThread(threading.Thread):
 def update_time(user_time,user_name):
     total_time = (datetime.datetime.now() - user_time[user_name]).seconds  # 在线时长
     print 'total_time:' + str(total_time)
-    f = open(user_time_path, 'r')
-    lines = f.readlines()
-    index = 0
-    for line in lines:
-        if user_name == line[0:line.find('@@')]:
-            per_time = eval(line[line.find('@@') + 2:])
-            total_time = per_time + total_time
-            tmp_line = user_name + '@@' + str(total_time) + '\n'
-            lines[index] = tmp_line
-            break
-        index = index + 1
-    f.close()
-    f = open(user_time_path, 'w')
-    for line in lines:
-        f.write(line)
-    f.close()
+    database.add_time(user_name,total_time)
+    # f = open(user_time_path, 'r')
+    # lines = f.readlines()
+    # index = 0
+    # for line in lines:
+    #     if user_name == line[0:line.find('@@')]:
+    #         per_time = eval(line[line.find('@@') + 2:])
+    #         total_time = per_time + total_time
+    #         tmp_line = user_name + '@@' + str(total_time) + '\n'
+    #         lines[index] = tmp_line
+    #         break
+    #     index = index + 1
+    # f.close()
+    # f = open(user_time_path, 'w')
+    # for line in lines:
+    #     f.write(line)
+    # f.close()
     return
 
 # def write_time(user_name):
@@ -358,7 +361,7 @@ def read_file():
       for username in all_username:
         ret[username[0]] = database.search_passwd(username[0])
     return ret
-
+# database.delete()
 database.create_sql()
 # user_time_path = r'D:\online_time.txt'  # 配置存储用户在线时间目录
 # user_pwd_path = r'D:\server_user.txt' # 配置用户密码信息目录
