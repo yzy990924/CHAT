@@ -1,0 +1,3 @@
+该服务端实现的是一个线程对应多个用户，每个线程使用IO多路复用技术监听哪些套接字可读可写再继续操作
+1.需要将oneline_time.txt文件放在'D:\oneline_time.txt'（可在代码中更改默认位置）
+2.需要将server_user.txt文件放在'D:\server_user.txt'
