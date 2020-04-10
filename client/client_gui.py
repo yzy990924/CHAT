@@ -48,7 +48,7 @@ class Login_application(Tkinter.Frame):
             return
         try:
             self.client.conn_sock.connection() # 连接服务器
-            self.client.conn_sock.send_mess('0','3',self.id_input.get() + '@@' + self.passwd_input.get())   # 发送登陆信息
+            self.client.conn_sock.send_mess('0','2',self.id_input.get() + '@@' + self.passwd_input.get())   # 发送登陆信息
         except IOError:
             tkMessageBox.showerror('错误','无法连接服务器')
             self.quit()
@@ -254,10 +254,6 @@ class Main_Room_application(Tkinter.Frame):
         self.scrollbar.grid(row = 1,column = 2,ipady = 25)
         self.allroom = Tkinter.Listbox(self.left_frame,yscrollcommand = self.scrollbar.set,height = 5)
         self.scrollbar['command'] = self.allroom.yview
-        index = 0
-        for c in range(5):
-          index = index + 1
-          self.allroom.insert(index, c)
         self.start_button = Tkinter.Button(self.left_frame,text = '进入房间',command = self.entry_room)
         self.allroom.grid(row = 1,column = 1,ipady = 10)
         ######################################
@@ -293,12 +289,6 @@ class Main_Room_application(Tkinter.Frame):
         ####################################################
         self.all_player = Tkinter.Listbox(self.right_frame)
         self.all_player.bind('<Double-Button-1>',self.create_person_chat)         # 双击事件
-        # self.all_player.insert(1, "wen")
-        # self.all_player.insert(2, "cai")
-        # self.all_player.insert(3, "WEN")
-        # self.all_player.insert(4, "PHP")
-        # self.all_player.insert(5, "JSP")
-        # self.all_player.insert(6, "Ruby")
         self.all_player.grid(row=1, column=2, sticky=Tkinter.N, ipady=100)
         ####################################
         self.onlinelabel = Tkinter.Label(self.right_frame, text='在线用户:')
@@ -425,14 +415,6 @@ class  Main_Chat_application(Tkinter.Frame):
         print self.input_text.get()
         self.input_text.delete(0,Tkinter.END)
         return
-
-    # def send_ans(self):
-    #     if self.input_text.get() == '':
-    #         return
-    #     self.client.conn_sock.send_mess('1','0',self.room_name + '@@' + self.input_text.get()) # 发送游戏答案
-    #     self.main_text.insert(Tkinter.END, self.client.main_app.username + ': 游戏回答: ' + self.input_text.get() + '\n')  # 只有自己可见
-    #     self.input_text.delete(0,Tkinter.END)
-    #     return
 
     def quick_send_mess(self,event):
         self.send_mess()

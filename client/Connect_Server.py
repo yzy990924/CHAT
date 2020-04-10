@@ -63,6 +63,8 @@ class Connect_S:
             self.client.stop_flag = '4' # 用户名已存在
         elif head_str == '0B':
             self.client.stop_flag = 'B'# 注册成功
+        elif head_str == '0C':
+            self.client.stop_flag = 'C'# 注册成功
         elif head_str == '11':  # 大厅消息
             self.client.main_app.datingtext.insert(Tkinter.END, mess_recv)
         elif head_str == '12':  # 房间消息
@@ -106,9 +108,6 @@ class Connect_S:
 
 
     def recv_mess(self):
-        #while self.flag:
-            #data = self.s.recv(1024)
-            #self.client.main_app.datingtext.insert(Tkinter.END,data)
         sock = self.s
         all_buffer = ''  # 该套接字接收缓冲区
         one_buffer = ''  # 该套接字正在接收的单个数据包部分

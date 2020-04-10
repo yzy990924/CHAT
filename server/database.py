@@ -1,80 +1,105 @@
+#coding:utf-8
 import socket
 import threading
 import sqlite3
+import sys
 
-dbfile = "chatplat.db"
-#建一个数据库
+dbfile = "Chat.db"
+
 def create_sql():
     sql = sqlite3.connect(dbfile)
     sql.execute("""create table if not exists
         %s(
         %s integer primary key autoincrement,
         %s varchar(128),
-        %s varchar(128),
-        %s integer
+        %s varchar(128)
         )"""
         % ('user',
             'id',
             'name',
-            'passworld',
-            'room_id'
+            'passwd'
            ))
     sql.execute("""create table if not exists
         %s(
-        %s integer primary key autoincrement,
         %s varchar(128),
-        %s varchar(128),
-        %s integer
+        %s varchar(128)
         )"""
-        % ('chatroom',
-            'room_id',
-            'room_name',
-            'room_note',
-            'id'
+        % ('userTime',
+            'name',
+            'time'
            ))
     sql.close()
  
-# user表增加数据
-def add_user_data(input_name,input_passworld):
+def search_all_username():
     sql = sqlite3.connect(dbfile)
-    sql.execute("insert into user(name,passworld) values(?,?)",
-                (input_name,input_passworld))
-    sql.commit()
-    print("用户添加成功")
-    sql.close()
-
-#chatroom增加数据
-def add_chatroon_data(room_name,room_note):
-    sql = sqlite3.connect(dbfile)
-    sql.execute("insert into chatroom(room_name,room_note) values(?,?)",
-                (room_name,room_note))
-    sql.commit()
-    print("聊天室添加成功")
-    sql.close()
-
-#用户加入已存在的聊天室
-def join_chatroom():
-
-#按照用户名查找密码
-def search_password(input_name):
-	try:
+    try:
         sql = sqlite3.connect(dbfile)
         cur = sql.cursor()
-        cur.execute("select passworld from user where name = input_name")
-        print (cur.fetchall())
+        cur.execute("select name from user")
+        return cur.fetchall()
     except sqlite3.Error as e:
-        print (e)
+        print e
     sql.close()
 
-#当用户注销时, 删除此用户记录
-def delete(input_name):
-	try:
+def search_passwd(input_name):
+    input_name = input_name
+    try:
         sql = sqlite3.connect(dbfile)
- 		sql.execute("DELETE FROM user WHERE name = input_name" % id)
-        sql.commit()
-        print ('用户注销成功')
+        cur = sql.cursor()
+        cur.execute("select passwd from user where name  = ? ", [input_name] )
+        return cur.fetchall()[0][0]
     except sqlite3.Error as e:
-        print (e)
+        print e
+    sql.close()
+
+def add_user(input_name,input_password):
+    print input_name
+    sql = sqlite3.connect(dbfile)
+    sql.execute("insert into user(name,passwd) values(?,?)",
+                (input_name,input_password))
+    sql.commit()
+    sql.close()
+
+def add_time(input_name,input_time):
+    sql = sqlite3.connect(dbfile)
+    try:
+        cur = sql.cursor()
+        cur.execute("select time from userTime where name = ? ",[input_name])
+        print cur.fetchall()
+        if cur.fetchall() != []:
+            time = cur.fetchall()[0][0]
+            sql.execute("update userTime set time = (?) where name = input_name",
+                (input_time+time))
+            sql.commit()
+        else :
+            sql.execute("insert into userTime(name,time) values(?,?)",
+                (input_name,input_time))
+            sql.commit()
+
+    except sqlite3.Error as e:
+        print e
+    sql.close()
+
+def update_user(input_name,input_passwd):
+    sql = sqlite3.connect(dbfile)
+    try:
+        world = "update user set passwd = ? where name = ?" 
+        sql.execute(world,(input_passwd,input_name))
+        sql.commit()
+    except sqlite3.Error as e:
+        print e
+    sql.close()
+
+
+def delete(): 
+
+    try:
+        sql = sqlite3.connect(dbfile)
+        sql.execute("DELETE FROM user")
+        sql.commit()
+
+    except sqlite3.Error as e:
+        print e
     sql.close()
 
 

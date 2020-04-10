@@ -36,7 +36,3 @@ except IOError:
 finally:
     app.conn_sock.close_connection()
     app.close()
-#print bin(1222222)
-#b =  struct.pack('<I',7888)
-#print len(bb)
-#print struct.unpack('<I',bb)
