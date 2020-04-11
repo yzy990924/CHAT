@@ -128,7 +128,7 @@ class Backpass_application(Tkinter.Frame):
         while self.client.stop_flag == None:
             time.sleep(0.1)
             print 'waiting...'
-        if self.client.stop_flag == 'D':
+        if self.client.stop_flag == '2':
             tkMessageBox.showinfo('消息', '找回密码失败: ' + '用户名不存在')
         elif self.client.stop_flag == 'C':
             tkMessageBox.showinfo('消息', '密码找回成功\n')
@@ -451,6 +451,9 @@ class New_room_application(Tkinter.Frame):
             if self.id_input.get() == self.client.main_app.allroom.get(i):
                 tkMessageBox.showinfo('提示', '已存在该名称')
                 return
+            if self.id_input.get()=='' or self.add_input.get() == '':
+                tkMessageBox.showinfo('提示', '请补充完整')
+            return
         print 'create new room:' + self.id_input.get()
         self.client.conn_sock.send_mess('0','6',self.id_input.get() + '@@' + self.add_input.get())
         tkMessageBox.showinfo('提示','创建成功')

@@ -5,7 +5,7 @@ import time
 import tkMessageBox
 import threading
 import struct
-import  client_gui
+import client_gui
 
 def get_config(path):
     f = open(path,'r')

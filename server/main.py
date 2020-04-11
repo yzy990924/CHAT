@@ -23,11 +23,12 @@ class Chat_One_Process():
       self.sock = sock  # 该对象处理的套接字
       self.addr = addr  # 该对象处理对象的地址
 
-   def game_process(self,room_name):  # 处理每个房间
+   def room_process(self,room_name):  # 处理每个房间
       global room_answer
       global answer_valid
       global room_user
       first  = True
+      time.sleep(1)
       if first :
         tmp_mess = 'hello, 欢迎进入聊天室!'
         for u in room_user[room_name]:
@@ -47,7 +48,6 @@ class Chat_One_Process():
       global all_room
       global room_user
       global user_pwd
-      global num_game
 
       if head_str == '01':  # 注册用户
          index = one_buffer.find('@@')
@@ -104,7 +104,7 @@ class Chat_One_Process():
          all_room.append(one_buffer[0:index])
          room_user[one_buffer[0:index]] = []
          room_answer[one_buffer[0:index]] = []  # 在回答字典中加入该key
-         t = threading.Thread(target=self.game_process, args=(one_buffer[0:index],))
+         t = threading.Thread(target=self.room_process, args=(one_buffer[0:index],))
          t.setDaemon(True)
          t.start()
          for u in all_user:  # 向所有用户告知
@@ -288,9 +288,7 @@ all_room = []   # key 房间名
 mess_queue = {}  # key 为套接字, value为发送列表[mess1,mess2]
 room_user = {}  # key 房间名 value 该房间所有用户, 是一个list
 room_answer = {} # key 房间名 value 是一个[u1 ,ans_str]  第一个key是回答的用户，第二个是回答串
-answer_valid = {} # key 房间名 value为当前回答是否有效, 就是是否在15秒之内被服务器收到
-num_game = {} # key为房间名  value为list （当前21点游戏四个数字)
-threads = []
+threads = [] # 线程池
 for i in range(100):
    threads.append(MyThread())
    threads[i].start()
